@@ -24,3 +24,97 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/*#BackgroundColor*/
+
+.ghibli-background {
+  background:
+          linear-gradient(
+                  to bottom right,
+                  #0a1128 0%,
+                  #1a2a4a 25%,
+                  #1b263b 50%,
+                  #1a1a2e 75%,
+                  #0d0f1a 100%
+          ),
+          conic-gradient(
+                  from 45deg at 20% 50%,
+                  rgba(26, 42, 74, 0.6),
+                  rgba(26, 26, 46, 0.4),
+                  transparent 70%
+          );
+  background-size: cover;
+  filter: brightness(0.85) contrast(1.1);
+}
+
+.bg-dark {
+    @apply inset-0 bg-black/30 z-0;
+}
+
+/*#TextColor*/
+
+.title-gradient-text {
+    background: linear-gradient(to bottom left, #fa8bff 0%, #2bd2ff 50%, #2bff88 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline;
+}
+
+.blue-gradient-text {
+    background: linear-gradient(to bottom right, #55f8f3 0%, #00c3ff 50%, #41f7fa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline;
+}
+
+.gray-gradient-text {
+    background: linear-gradient(to bottom right, #b0b3b5 0%, #bcbecc 50%, #b0b3b5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline;
+}
+
+/*#Animation*/
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 1s ease-out both;
+}
+
+/*#Structure*/
+
+.wrapper {
+  @apply w-full max-w-7xl mx-auto px-4 lg:px-8 items-center;
+}
+
+.glassmorphism {
+  background: rgba(1, 1, 1, 0.2);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
