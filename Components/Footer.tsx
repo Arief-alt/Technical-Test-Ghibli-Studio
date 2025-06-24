@@ -7,7 +7,7 @@ const Footer = () => {
                 <div className="flex justify-center items-center gap-3">
                     <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br from-teal-400 via-blue-500 to-purple-600 shadow-md"/>
 
-                    <h1 className="title-gradient-text text-2xl font-bold">
+                    <h1 className="title-gradient-text text-lg md:text-2xl font-bold">
                         Studio Ghibli Collection
                     </h1>
                 </div>
