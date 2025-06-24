@@ -1,20 +1,46 @@
-import React from 'react'
+'use client';
+
+import React, { useState } from 'react'
 import Image from 'next/image'
+import {MovieCard, NotFound} from "../../Components"
+import { useQuery } from '@tanstack/react-query';
+
+const fetchFilms = async () => {
+    const res = await fetch('https://ghibliapi.vercel.app/films');
+    if (!res.ok) throw new Error('Failed to fetch films');
+    return res.json();
+};
+
+const generateYears = (startYear: number, endYear: number) => {
+    const years = [];
+    for (let year = endYear; year >= startYear; year--) {
+        years.push(year);
+    }
+    return years;
+};
 
 const Page = () => {
-    const generateYears = (startYear: number, endYear: number) => {
-        const years = [];
-        for (let year = endYear; year >= startYear; year--) {
-            years.push(year);
-        }
-        return years;
-    };
+    const { data: films = [], isLoading, error } = useQuery({
+        queryKey: ['films'],
+        queryFn: fetchFilms,
+    });
+
+    const [selectedYear, setSelectedYear] = useState('All');
+    const [selectedDirector, setSelectedDirector] = useState('All');
+
+    const filteredFilms = films.filter((film: any) => {
+        const matchYear = selectedYear === 'All' || film.release_date === selectedYear;
+        const matchDirector = selectedDirector === 'All' || film.director === selectedDirector;
+        return matchYear && matchDirector;
+    });
+
+
     const GHIBLI_START_YEAR = 1984;
     const CURRENT_YEAR = new Date().getFullYear();
     const availableYears = generateYears(GHIBLI_START_YEAR, CURRENT_YEAR);
 
     return (
-        <main className="pt-40 wrapper pb-40">
+        <main className="pt-20 wrapper pb-40">
             <header className="text-center items-center flex flex-col gap-4 fade-in-up">
                 <h1 className="title-gradient-text font-bold text-4xl animate-float">
                     Studio Ghibli
@@ -42,8 +68,10 @@ const Page = () => {
                         <div className="flex items-center w-full px-4 py-2 bg-black border border-gray-600 rounded-lg">
                             <select
                                 className="text-white bg-black w-full outline-none appearance-none cursor-pointer"
+                                value={selectedYear}
+                                onChange={(e) => setSelectedYear(e.target.value)}
                             >
-                                <option className="bg-black text-white" value="All Years">All Years</option>
+                                <option className="bg-black text-white" value="All">All Years</option>
 
                                 {availableYears.map((year) => (
                                     <option className="bg-black text-white" key={year} value={year.toString()}>
@@ -54,7 +82,7 @@ const Page = () => {
 
                             <div className="pr-2">
                                 <Image
-                                    src="/arrow-down.png"
+                                    src="/icons/arrow-down.png"
                                     alt="arrow down"
                                     width={17}
                                     height={17}
@@ -71,6 +99,8 @@ const Page = () => {
                         <div className="flex items-center w-full px-4 py-2 bg-black border border-gray-600 rounded-lg">
                             <select
                                 className="text-white bg-black w-full outline-none appearance-none cursor-pointer"
+                                value={selectedDirector}
+                                onChange={(e) => setSelectedDirector(e.target.value)}
                             >
                                 <option className="bg-black text-white" value="All">All Directors</option>
                                 <option className="bg-black text-white" value="Hayao Miyazaki">Hayao Miyazaki</option>
@@ -82,7 +112,7 @@ const Page = () => {
 
                             <div className="pr-2">
                                 <Image
-                                    src="/arrow-down.png"
+                                    src="/icons/arrow-down.png"
                                     alt="arrow down"
                                     width={17}
                                     height={17}
@@ -94,10 +124,15 @@ const Page = () => {
 
                 <div className="flex justify-end mt-4">
                     <button
+                        onClick={() => {
+                            setSelectedYear("All");
+                            setSelectedDirector("All");
+                        }}
                         className="cursor-pointer text-sm text-gray-400 hover:text-gray-100 transition-colors duration-200"
                     >
                         Clear all filters
                     </button>
+
                 </div>
             </section>
 
@@ -108,9 +143,36 @@ const Page = () => {
                     </h1>
 
                     <span className="text-gray-300 text-md">
-                        8 films found
+                      {filteredFilms.length} {filteredFilms.length === 1 ? 'film' : 'films'} found
                     </span>
                 </div>
+            </section>
+
+            <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 md:justify-center items-stretch justify-items-center">
+            {isLoading ? (
+                    <p className="pt-20 col-span-full fade-in-up">Loading...</p>
+                ) : error ? (
+                    <p className="pt-20 col-span-full text-red-500">Failed to fetch films.</p>
+                ) : filteredFilms.length === 0 ? (
+                    <div className="pt-20 col-span-full">
+                        <NotFound />
+                    </div>
+                ) : (
+                    filteredFilms.map((film: any) => (
+                        <MovieCard
+                            key={film.id}
+                            image={film.image}
+                            rating={parseInt(film.rt_score)}
+                            title={film.title}
+                            subtitle={film.original_title}
+                            description={film.description}
+                            director={film.director}
+                            producer={film.producer}
+                            year={parseInt(film.release_date)}
+                            runtime={parseInt(film.running_time)}
+                        />
+                    ))
+                )}
             </section>
         </main>
     )
