@@ -18,7 +18,7 @@ const MovieCard = ({image, rating, title, subtitle, description, director, produ
                         width={12}
                         height={12}
                     />
-                    <span>{rating}%</span>
+                    <p>{rating}%</p>
                 </div>
             </div>
 
